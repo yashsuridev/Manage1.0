@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Hostel Fees Management</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- No Firebase — using local backend -->
+    
+    <style>
+        * {
+            margin: -1px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #000000;
+            --accent: #00d9ff;
+            --success: #00c853;
+            --danger: #ff5252;
+            --dark: #0f0f23;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--dark) 0%, #1a1a3e 50%, #2d1b4e 100%);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           ANIMATED GLASSY BACKGROUND
+        ============================================ */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* Glass orbs - large floating elements */
+        .glass-orb {
+            position: absolute;
+            border-radius: 60%;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 200px;
+            height: 100px;
+            top: -150px;
+            left: -150px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.2));
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            right: -100px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.25), rgba(102, 126, 234, 0.2));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(118, 75, 162, 0.3), rgba(0, 217, 255, 0.15));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation-delay: -14s;
+        }
+
+        /* Additional glass orbs for richer background */
+        .orb-4 {
+            width: 200px;
+            height: 200px;
+            top: 20%;
+            right: 10%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(0, 217, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation-delay: -3s;
+        }
+
+        .orb-5 {
+            width: 150px;
+            height: 150px;
+            bottom: 30%;
+            left: 8%;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(118, 75, 162, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation-delay: -10s;
+        }
+
+        .orb-6 {
+            width: 250px;
+            height: 250px;
+            top: 10%;
+            left: 30%;
+            background: linear-gradient(135deg, rgba(118, 75, 162, 0.2), rgba(102, 126, 234, 0.15));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation-delay: -5s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(40px, -30px); }
+            50% { transform: translate(-30px, 40px); }
+            75% { transform: translate(-50px, -15px); }
+        }
+
+        /* Floating glass panels */
+        .glass-panel {
+            position: absolute;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            animation: floatPanel 25s ease-in-out infinite;
+        }
+
+        .panel-1 {
+            width: 180px;
+            height: 120px;
+            top: 15%;
+            left: 5%;
+            animation-delay: -2s;
+        }
+
+        .panel-2 {
+            width: 140px;
+            height: 90px;
+            bottom: 20%;
+            right: 8%;
+            animation-delay: -8s;
+        }
+
+        .panel-3 {
+            width: 100px;
+            height: 100px;
+            top: 60%;
+            left: 3%;
+            animation-delay: -12s;
+        }
+
+        /* Floating hostel images with glass effect */
+        .hostel-img {
+            position: absolute;
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: floatHostelImage 30s ease-in-out infinite;
+        }
+
+        .hostel-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .hostel-img:hover img {
+            opacity: 1;
+        }
+
+        .hostel-1 {
+            width: 200px;
+            height: 140px;
+            top: 8%;
+            right: 12%;
+            animation-delay: -4s;
+        }
+
+        .hostel-2 {
+            width: 160px;
+            height: 120px;
+            bottom: 15%;
+            left: 10%;
+            animation-delay: -9s;
+        }
+
+        .hostel-3 {
+            width: 180px;
+            height: 130px;
+            top: 45%;
+            right: 5%;
+            animation-delay: -15s;
+        }
+
+        .hostel-4 {
+            width: 140px;
+            height: 100px;
+            top: 20%;
+            left: 8%;
+            animation-delay: -7s;
+        }
+
+        .hostel-5 {
+            width: 120px;
+            height: 90px;
+            bottom: 35%;
+            right: 15%;
+            animation-delay: -18s;
+        }
+
+        .hostel-6 {
+            width: 150px;
+            height: 110px;
+            top: 5%;
+            left: 4%;
+            animation-delay: -12s;
+        }
+
+        .hostel-7 {
+            width: 130px;
+            height: 95px;
+            bottom: 10%;
+            right: 25%;
+            animation-delay: -6s;
+        }
+
+        .hostel-8 {
+            width: 170px;
+            height: 120px;
+            top: 65%;
+            left: 25%;
+            animation-delay: -20s;
+        }
+
+        @keyframes floatHostelImage {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(10px) translateX(-5px); }
+            75% { transform: translateY(-25px) translateX(5px); }
+        }
+
+        @keyframes floatPanel {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-25px) translateX(10px); }
+        }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Floating particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: particleFloat 15s linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* ============================================
+           MAIN CONTAINER
+        ============================================ */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 420px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            margin: 0 auto 16px;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+            animation: logoPulse 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 28px;
+            z-index: -1;
+            filter: blur(15px);
+            opacity: 0.6;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-section h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .logo-section p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Login Card */
+        .login-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 35px;
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .login-card h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .login-card .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 16px 16px 50px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .password-toggle:hover {
+            opacity: 1;
+        }
+
+        /* Form Options */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .remember-me input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        /* Login Button */
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.35);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+        }
+
+        .divider span {
+            padding: 0 12px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 14px 24px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.4s ease;
+        }
+
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--danger); }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(80px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 24px;
+            }
+
+            .logo-icon {
+                width: 75px;
+                height: 75px;
+                font-size: 2.2rem;
+            }
+
+            .logo-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .glass-orb, .glass-panel {
+                transform: scale(0.7);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Glassy Background -->
+    <div class="bg-animation">
+        <div class="glass-orb orb-1"></div>
+        <div class="glass-orb orb-2"></div>
+        <div class="glass-orb orb-3"></div>
+        <div class="glass-orb orb-4"></div>
+        <div class="glass-orb orb-5"></div>
+        <div class="glass-orb orb-6"></div>
+        <div class="glass-panel panel-1"></div>
+        <div class="glass-panel panel-2"></div>
+        <div class="glass-panel panel-3"></div>
+        <div class="hostel-img hostel-1">
+            <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=300&fit=crop" alt="Hostel Building">
+        </div>
+        <div class="hostel-img hostel-2">
+            <img src="https://images.unsplash.com/photo-1559788248-3b08873d8b73?w=400&h=300&fit=crop" alt="Student Housing">
+        </div>
+        <div class="hostel-img hostel-3">
+            <img src="https://images.unsplash.com/photo-1486718448742-163732cd1544?w=400&h=300&fit=crop" alt="Hostel Exterior">
+        </div>
+        <div class="hostel-img hostel-4">
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop" alt="Dormitory">
+        </div>
+        <div class="hostel-img hostel-5">
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop" alt="Student Residence">
+        </div>
+        <div class="hostel-img hostel-6">
+            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop" alt="Luxury Hostel">
+        </div>
+        <div class="hostel-img hostel-7">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=300&fit=crop" alt="Modern Building">
+        </div>
+        <div class="hostel-img hostel-8">
+            <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop" alt="Classic Hostel">
+        </div>
+        <div class="grid-overlay"></div>
+        <div class="particles" id="particles"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Login Container -->
+    <div class="login-wrapper">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <!-- <div class="logo-icon">🏠</div> -->
+            <h1>Hostel Fees</h1>
+            <p>Management Portal</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="login-card">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Sign in to continue</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📧</span>
+                        <input type="email" class="form-input" id="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" class="form-input" id="password" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <span>Remember me</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span id="loginText">Sign In</span>
+                </button>
+            </form>
+
+            <div class="divider"><span>Secure Login</span></div>
+
+            <p class="login-footer">© 2026 Hostel Fees Management</p>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:3000/api';
+
+        // Redirect if already logged in
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'index.html';
+        }
+
+        // Particles animation
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (12 + Math.random() * 12) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${type === 'success' ? '✓' : '✕'}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Toggle password visibility
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const toggle = document.querySelector('.password-toggle');
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        }
+
+        // Handle login — calls local backend
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email    = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            const loginBtn  = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+
+            loginBtn.disabled = true;
+            loginText.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                const res = await fetch(`${API}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Login failed.');
+                }
+
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('userEmail', data.email);
+                sessionStorage.setItem('userDisplay', data.display);
+                sessionStorage.setItem('userRole', data.role);
+
+                if (remember) {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userEmail', data.email);
+                    localStorage.setItem('userDisplay', data.display);
+                    localStorage.setItem('userRole', data.role);
+                }
+
+                showToast('Login successful! Redirecting...', 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 900);
+
+            } catch (error) {
+                loginBtn.disabled = false;
+                loginText.textContent = 'Sign In';
+                showToast(error.message || 'Login failed. Is the server running?', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
